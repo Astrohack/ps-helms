@@ -5,6 +5,7 @@ k3d_config := "bootstrap/k3d-config.yaml"
 age_key_file := "sops-age.key"
 expose_secrets_file := "gitops/charts/argocd-expose/secrets.enc.yaml"
 domain := "*.localhost"
+call_recipe := just_executable() + " --justfile=" + justfile()
 
 # Lists all available tasks
 default:
@@ -22,9 +23,10 @@ bootstrap:
     helm repo add argo https://argoproj.github.io/argo-helm
     helm repo update
     helm upgrade --install argocd argo/argo-cd -n argocd -f bootstrap/argocd-values.yaml --version 9.5.17
+    {{call_recipe}} wait-for-argocd
     kubectl apply -f gitops/appset.yaml -n argocd
 
-# Completely removes the local k3d cluster instance
+# Removes the local k3d cluster instance
 delete-cluster:
     @echo "Destroying k3d cluster..."
     k3d cluster delete {{cluster_name}}
@@ -61,7 +63,7 @@ inject-sops-key:
     kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
     kubectl create secret generic sops-age \
         -n argocd \
-        --from-file=key.txt={{age_key_file}} \
+        --from-file=keys.txt={{age_key_file}} \
         --dry-run=client -o yaml | kubectl apply -f -
 
 setup-local-ca:

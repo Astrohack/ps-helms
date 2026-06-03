@@ -4,6 +4,7 @@ metadata:
   name: cluster-workloads
   namespace: argocd
 spec:
+  goTemplate: true
   generators:
   - git:
       repoURL: https://github.com/Astrohack/ps-helms.git
@@ -13,15 +14,15 @@ spec:
 
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: '{{ .path.basename }}'
       annotations:
-        argocd.argoproj.io/sync-wave: '{{default "5" syncWave}}'
+        argocd.argoproj.io/sync-wave: '{{ default "5" .syncWave }}'
     spec:
       project: default
       source:
         repoURL: https://github.com/Astrohack/ps-helms.git
         targetRevision: HEAD
-        path: '{{path}}'
+        path: '{{ .path.path }}'
         helm:
           ignoreMissingValueFiles: true
           valueFiles:
@@ -29,7 +30,7 @@ spec:
             - secrets://secrets.enc.yaml
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{default "default" targetNamespace}}'
+        namespace: '{{ default "default" .targetNamespace }}'
       syncPolicy:
         automated:
           prune: true

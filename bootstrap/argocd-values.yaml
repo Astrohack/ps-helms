@@ -15,6 +15,12 @@ repoServer:
       value: sops
     - name: SOPS_AGE_KEY_FILE
       value: /helm-secrets-private-keys/keys.txt
+    # ZMIENNA 1: Wymagane, aby system widział pobrane narzędzia
+    - name: PATH
+      value: /custom-tools:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    # ZMIENNA 2: Wskazanie wrapperowi prawdziwej ścieżki Helma
+    - name: HELM_SECRETS_HELM_PATH
+      value: /usr/local/bin/helm
 
   volumes:
     - name: custom-tools
@@ -38,17 +44,15 @@ repoServer:
           wget -qO /custom-tools/sops https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64 &&
           chmod +x /custom-tools/sops &&
           wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf- &&
+          # sed -i '/platformCommand:/d' /custom-tools/helm-plugins/helm-secrets/plugin.yaml &&
           cp /custom-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /custom-tools/helm &&
           chmod +x /custom-tools/helm
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
 
   volumeMounts:
-    - mountPath: /usr/local/bin/helm
-      subPath: helm
-      name: custom-tools
-    - mountPath: /usr/local/bin/sops
-      subPath: sops
-      name: custom-tools
-    - mountPath: /custom-tools/helm-plugins
+    - mountPath: /custom-tools
       name: custom-tools
     - mountPath: /helm-secrets-private-keys
       name: sops-age-key
