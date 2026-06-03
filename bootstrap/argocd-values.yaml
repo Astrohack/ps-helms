@@ -1,0 +1,55 @@
+configs:
+  params:
+    server.insecure: "true"
+  cm:
+    helm.valuesFileSchemes: >-
+      secrets,
+      secrets+age-import,
+      secrets+age-import-kubernetes
+
+repoServer:
+  env:
+    - name: HELM_PLUGINS
+      value: /custom-tools/helm-plugins/
+    - name: HELM_SECRETS_BACKEND
+      value: sops
+    - name: SOPS_AGE_KEY_FILE
+      value: /helm-secrets-private-keys/keys.txt
+
+  volumes:
+    - name: custom-tools
+      emptyDir: {}
+    - name: sops-age-key
+      secret:
+        secretName: sops-age
+
+  initContainers:
+    - name: download-tools
+      image: alpine:3.19
+      command: [sh, -c]
+      env:
+        - name: HELM_SECRETS_VERSION
+          value: "4.6.0"
+        - name: SOPS_VERSION
+          value: "v3.8.1"
+      args:
+        - >-
+          mkdir -p /custom-tools/helm-plugins &&
+          wget -qO /custom-tools/sops https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64 &&
+          chmod +x /custom-tools/sops &&
+          wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf- &&
+          cp /custom-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /custom-tools/helm &&
+          chmod +x /custom-tools/helm
+
+  volumeMounts:
+    - mountPath: /usr/local/bin/helm
+      subPath: helm
+      name: custom-tools
+    - mountPath: /usr/local/bin/sops
+      subPath: sops
+      name: custom-tools
+    - mountPath: /custom-tools/helm-plugins
+      name: custom-tools
+    - mountPath: /helm-secrets-private-keys
+      name: sops-age-key
+      readOnly: true

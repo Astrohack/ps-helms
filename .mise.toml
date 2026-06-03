@@ -1,0 +1,15 @@
+[tools]
+age = "latest"
+helm = "latest"
+just = "latest"
+k3d = "latest"
+kubectl = "latest"
+mkcert = "latest"
+sops = "latest"
+usage = "latest"
+yq = "latest"
+
+[plugins]
+
+[env]
+SOPS_AGE_KEY_FILE = "sops-age.key"

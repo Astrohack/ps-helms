@@ -1,0 +1,4 @@
+apiVersion: v2
+name: argocd-expose
+version: 1.0.0
+description: Exposes Argo CD via istio

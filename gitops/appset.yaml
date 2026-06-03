@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-workloads
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/Astrohack/ps-helms.git
+      revision: HEAD
+      files:
+        - path: "gitops/charts/**/.argocd.yaml"
+
+  template:
+    metadata:
+      name: '{{path.basename}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{default "5" syncWave}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Astrohack/ps-helms.git
+        targetRevision: HEAD
+        path: '{{path}}'
+        helm:
+          ignoreMissingValueFiles: true
+          valueFiles:
+            - values.yaml
+            - secrets://secrets.enc.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{default "default" targetNamespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

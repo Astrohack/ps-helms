@@ -1,0 +1,19 @@
+domain: kiali.localhost
+
+kiali-server:
+  auth:
+    strategy: anonymous
+  server:
+    port: 20001
+    web_root: /
+  external_services:
+    tracing:
+      enabled: true
+      in_cluster_url: 'http://jaeger-query.jaeger.svc.cluster.local:16686'
+      url: 'https://jaeger.localhost'
+      use_grpc: true
+    prometheus:
+      enabled: false
+      url: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
+  ingress:
+    enabled: false

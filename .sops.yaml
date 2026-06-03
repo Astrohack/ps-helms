@@ -1,0 +1,5 @@
+creation_rules:
+  - path_regex: '.*\.enc\.yaml$'
+    age: 'age1dx0uxanssvu2rnkrh2zs0ra6cddc40hga0qgeqkv5wf942paneds5xkj4l'
+  - path_regex: 'gitops/charts/.*/secrets\.yaml$'
+    age: 'age1dx0uxanssvu2rnkrh2zs0ra6cddc40hga0qgeqkv5wf942paneds5xkj4l'

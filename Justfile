@@ -1,0 +1,93 @@
+set dotenv-load
+
+cluster_name := "local-k3s"
+k3d_config := "bootstrap/k3d-config.yaml"
+age_key_file := "sops-age.key"
+expose_secrets_file := "gitops/charts/argocd-expose/secrets.enc.yaml"
+domain := "*.localhost"
+
+# Lists all available tasks
+default:
+    @just --list
+
+# Provisions the raw k3d cluster with ports 80/443 exposed
+create-cluster:
+    @echo "Provisioning k3d cluster..."
+    k3d cluster create -c {{k3d_config}}
+
+# Boots the cluster and bootstraps ArgoCD
+bootstrap:
+    @echo "Bootstrap in progress..."
+    kubectl create namespace argocd || true
+    helm repo add argo https://argoproj.github.io/argo-helm
+    helm repo update
+    helm upgrade --install argocd argo/argo-cd -n argocd -f bootstrap/argocd-values.yaml --version 9.5.17
+    kubectl apply -f gitops/appset.yaml -n argocd
+
+# Completely removes the local k3d cluster instance
+delete-cluster:
+    @echo "Destroying k3d cluster..."
+    k3d cluster delete {{cluster_name}}
+
+# Checks the health of core system pods
+status:
+    kubectl get pods -n argocd
+    kubectl get pods -n istio-system
+
+# Waits for Argo CD server to become ready
+wait-for-argocd:
+    #!/usr/bin/env bash
+    echo "Waiting for Argo CD to be ready..."
+    while ! kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}' | grep -q 'True'; do
+      sleep 2
+    done
+    echo "Argo CD is ready."
+
+# Generates a new Age key pair and updates .sops.yaml if it doesn't exist
+setup-sops:
+    #!/usr/bin/env bash
+    if [ ! -f {{age_key_file}} ]; then
+        echo "Generating new Age key..."
+        age-keygen -o {{age_key_file}}
+    else
+        echo "Age key already exists."
+    fi
+    PUB=$(age-keygen -y {{age_key_file}}) yq -i '.creation_rules[].age = strenv(PUB)' .sops.yaml
+
+
+# Injects the private Age key into the cluster before Argo CD starts
+inject-sops-key:
+    @echo "Injecting SOPS key into cluster..."
+    kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+    kubectl create secret generic sops-age \
+        -n argocd \
+        --from-file=key.txt={{age_key_file}} \
+        --dry-run=client -o yaml | kubectl apply -f -
+
+setup-local-ca:
+    @echo "Installing mkcert local CA..."
+    mkcert -install
+
+# Generates TLS cert, injects into Argo CD expose secrets, and encrypts with SOPS
+generate-and-inject-tls: setup-local-ca
+    #!/usr/bin/env bash
+    set -e
+
+    SECRET_FILE="{{expose_secrets_file}}"
+
+    mkcert -cert-file tls.crt -key-file tls.key "{{domain}}"
+
+    if [ -f "$SECRET_FILE" ]; then
+        if grep -q "sops:" "$SECRET_FILE"; then
+            sops --decrypt --in-place "$SECRET_FILE"
+        fi
+    else
+        mkdir -p $(dirname "$SECRET_FILE")
+        echo "tls:" > "$SECRET_FILE"
+    fi
+
+    yq -i '.tls.cert = load_str("tls.crt") | .tls.key = load_str("tls.key")' "$SECRET_FILE"
+
+    sops --encrypt --in-place "$SECRET_FILE"
+
+    rm tls.crt tls.key

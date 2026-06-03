@@ -1,0 +1,2 @@
+targetNamespace: istio-system
+syncWave: "2"

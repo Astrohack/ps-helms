@@ -1,0 +1,10 @@
+.idea/
+.vscode/
+
+/*.key
+/*.pem
+/*.crt
+
+*.lock
+
+**/charts/**/charts/
