@@ -9,11 +9,15 @@ kiali-server:
   external_services:
     tracing:
       enabled: true
-      in_cluster_url: 'http://jaeger-query.jaeger.svc.cluster.local:16686'
+      in_cluster_url: 'http://jaeger-query.jaeger.svc.cluster.local:16685'
       url: 'https://jaeger.localhost'
       use_grpc: true
     prometheus:
       enabled: false
       url: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
+    grafana:
+      enabled: true
+      in_cluster_url: 'http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80'
+      url: "grafana.localhost"
   ingress:
     enabled: false

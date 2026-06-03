@@ -1,5 +1,6 @@
 configs:
   params:
+    server.insecure: true
   cm:
     helm.valuesFileSchemes: >-
       secrets,

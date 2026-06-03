@@ -1,6 +1,6 @@
 gateway:
   service:
-    type: NodePort
+    type: LoadBalancer
   resources:
     requests:
       cpu: 100m
