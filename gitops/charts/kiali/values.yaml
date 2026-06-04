@@ -1,4 +1,5 @@
-domain: kiali.localhost
+domains:
+  kiali: "default.local"
 
 kiali-server:
   auth:

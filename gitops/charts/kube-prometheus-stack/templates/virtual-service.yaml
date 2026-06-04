@@ -1,15 +1,15 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: kiali-vc
+  name: grafana-vc
 spec:
   hosts:
-    - "{{ .Values.domains.kiali }}"
+    - "{{ .Values.domains.grafana }}"
   gateways:
     - istio-system/ops-gateway
   http:
     - route:
         - destination:
-            host: kiali.istio-system.svc.cluster.local
+            host: kube-monitoring-stack-grafana.monitoring.svc.cluster.local
             port:
-              number: 20001
+              number: 80

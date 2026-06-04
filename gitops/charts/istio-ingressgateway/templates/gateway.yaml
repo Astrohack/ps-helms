@@ -1,8 +1,8 @@
-apiVersion: networking.istio.io/v1
+apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: argocd-gateway
-  namespace: argocd
+  name: ops-gateway
+  namespace: istio-system
 spec:
   selector:
     istio: ingressgateway
@@ -12,7 +12,9 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "{{ .Values.domain }}"
+    {{- range $app, $domain := .Values.domains }}
+      - "{{ $domain }}"
+    {{- end }}
     tls:
       httpsRedirect: true
   - port:
@@ -20,7 +22,9 @@ spec:
       name: https
       protocol: HTTPS
     hosts:
-    - "{{ .Values.domain }}"
+    {{- range $app, $domain := .Values.domains }}
+      - "{{ $domain }}"
+    {{- end }}
     tls:
       mode: SIMPLE
       credentialName: ingress-wildcard-cert

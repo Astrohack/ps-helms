@@ -1,3 +1,6 @@
+domains:
+  grafana: "default.local"
+
 kube-prometheus-stack:
   grafana:
     enabled: true

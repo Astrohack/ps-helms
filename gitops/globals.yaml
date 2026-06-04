@@ -1,0 +1,5 @@
+domains:
+  argo: "argo.dev.localhost"
+  kiali: "kiali.dev.localhost"
+  grafana: "grafana.dev.localhost"
+  jaeger: "jaeger.dev.localhost"

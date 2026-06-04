@@ -1,3 +1,8 @@
+name: ingressgateway
+
+labels:
+  istio: ingressgateway
+
 gateway:
   service:
     type: LoadBalancer

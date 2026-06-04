@@ -1,4 +1,4 @@
 apiVersion: v2
-name: argocd-expose
+name: argocd-route
 version: 1.0.0
 description: Exposes Argo CD via istio

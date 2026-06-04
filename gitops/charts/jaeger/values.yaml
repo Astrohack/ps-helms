@@ -1,4 +1,5 @@
-domain: jaeger.localhost
+domains:
+  jaeger: "default.local"
 
 jaeger:
   provisionDataStore:
