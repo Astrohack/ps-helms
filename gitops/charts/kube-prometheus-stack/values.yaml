@@ -5,6 +5,12 @@ kube-prometheus-stack:
   grafana:
     enabled: true
     adminPassword: "admin"
+    additionalDataSources:
+      - name: Loki
+        type: loki
+        url: http://loki.monitoring.svc.cluster.local:3100
+        access: proxy
+        isDefault: false
 
   prometheus:
     prometheusSpec:

@@ -24,7 +24,7 @@ bootstrap:
     helm repo update
     helm upgrade --install argocd argo/argo-cd -n argocd -f infrastructure/argocd-values.yaml --version 9.5.17
     {{ call_recipe }} _wait-for-argocd
-    kubectl apply -f gitops/bootstrap/appset.yaml -f gitops/bootstrap/appset.yaml --wait
+    kubectl apply -f gitops/bootstrap/appset.yaml -f gitops/bootstrap/appproject.yaml --wait
 
 # Removes the local k3d cluster instance
 delete-cluster:

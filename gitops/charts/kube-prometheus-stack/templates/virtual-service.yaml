@@ -10,6 +10,6 @@ spec:
   http:
     - route:
         - destination:
-            host: kube-monitoring-stack-grafana.monitoring.svc.cluster.local
+            host: kube-prometheus-stack-grafana.monitoring.svc.cluster.local
             port:
               number: 80

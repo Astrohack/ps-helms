@@ -1,0 +1,10 @@
+apiVersion: v2
+name: log-collector-stack
+description: Log processor
+type: application
+version: 1.0.0
+
+dependencies:
+  - name: fluent-bit
+    version: "0.47.0"
+    repository: "https://fluent.github.io/helm-charts"
