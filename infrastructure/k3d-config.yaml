@@ -4,6 +4,7 @@ metadata:
   name: local-k3s
 servers: 1
 agents: 1
+
 ports:
   - port: 80:80
     nodeFilters: [loadbalancer]
@@ -13,4 +14,4 @@ options:
   k3s:
     extraArgs:
       - arg: --disable=traefik
-        nodeFilters: ['server:*']
+        nodeFilters: ["server:*"]

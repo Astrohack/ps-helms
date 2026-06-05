@@ -2,6 +2,12 @@ loki:
   singleBinary:
     replicas: 1
 
+  lokiCanary:
+    enabled: false
+
+  test:
+    enabled: false
+
   deploymentMode: SingleBinary
 
   read:

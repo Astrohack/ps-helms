@@ -1,7 +1,8 @@
 set dotenv-load
 
 cluster_name := "local-k3s"
-k3d_config := "infrastructure/k3d-config.yaml"
+k3d_config_single := "infrastructure/k3d-config.yaml"
+k3d_config_ha := "infrastructure/k3d-config-ha.yaml"
 age_key_file := "sops-age.key"
 ingress_tls_secrets_file := "gitops/charts/istio-ingressgateway/secrets.enc.yaml"
 domain := "*.dev.localhost"
@@ -12,9 +13,9 @@ _default:
     @just --list
 
 # Provisions the raw k3d cluster with ports 80/443 exposed
-create-cluster:
+create-cluster mode="single":
     @echo "Provisioning k3d cluster..."
-    k3d cluster create -c {{ k3d_config }}
+    k3d cluster create -c {{ if mode == "single" { k3d_config_single } else if mode == "ha" { k3d_config_ha } else { error("Panic: allowed re only 'single' or 'ha'") } }}
 
 # Boots the cluster and bootstraps ArgoCD
 bootstrap:
