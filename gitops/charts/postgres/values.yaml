@@ -1,0 +1,14 @@
+instances: 1
+storageSize: 1Gi
+
+postgresPassword: admin
+
+customRoles:
+- name: &kc-admin keycloak-admin
+  password: "admin"
+  login: true
+  comment: "Keycloak admin role"
+
+customDatabases:
+- name: keycloak
+  owner: *kc-admin

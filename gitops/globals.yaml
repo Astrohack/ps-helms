@@ -3,3 +3,10 @@ domains:
   kiali: "kiali.dev.localhost"
   grafana: "grafana.dev.localhost"
   jaeger: "jaeger.dev.localhost"
+  keycloak: "keycloak.dev.localhost"
+  rustfs: "rustfs.dev.localhost"
+
+# auth:
+#   keycloak:
+#     externalDatabase:
+#       user:

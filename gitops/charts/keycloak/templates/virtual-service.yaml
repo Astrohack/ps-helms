@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: keycloak-vs
+spec:
+  hosts:
+    - "{{ .Values.domains.keycloak }}"
+  gateways:
+    - istio-system/ops-gateway
+  http:
+    - match:
+        - uri:
+            exact: /
+      redirect:
+        uri: /auth/
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: keycloak-http.auth.svc.cluster.local
+            port:
+              number: 80

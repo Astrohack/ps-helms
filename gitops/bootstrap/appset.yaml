@@ -6,11 +6,11 @@ metadata:
 spec:
   goTemplate: true
   generators:
-    - git:
-        repoURL: https://github.com/Astrohack/ps-helms.git
-        revision: HEAD
-        files:
-          - path: "gitops/charts/**/.argocd.yaml"
+  - git:
+      repoURL: https://github.com/Astrohack/ps-helms.git
+      revision: HEAD
+      files:
+      - path: "gitops/charts/**/.argocd.yaml"
   template:
     metadata:
       name: "{{ .path.basename }}"
@@ -25,16 +25,16 @@ spec:
         helm:
           ignoreMissingValueFiles: true
           valueFiles:
-            - values.yaml
-            - secrets://secrets.enc.yaml
-            - "../../globals.yaml"
+          - values.yaml
+          - secrets://secrets.enc.yaml
+          - "../../globals.yaml"
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{ default "default" .targetNamespace }}'
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+        # automated:
+        #   prune: true
+        #   selfHeal: true
         syncOptions:
-          - CreateNamespace=true
-          - ServerSideApply=true
+        - CreateNamespace=true
+        - ServerSideApply=true

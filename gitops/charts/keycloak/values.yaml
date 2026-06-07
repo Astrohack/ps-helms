@@ -1,0 +1,67 @@
+domains:
+  keycloak: "keycloak.dev.localhost"
+
+kcSecrets:
+  KEYCLOAK_ADMIN_PASSWORD: admin
+  KC_DB_PASSWORD: admin
+
+kcConfig:
+  KEYCLOAK_ADMIN: admin
+  KC_DB: "keycloak"
+  KC_DB_URL: "jdbc:postgresql://postgres-rw.database.svc.cluster.local:5432/keycloak"
+  KC_DB_USERNAME: "keycloak-admin"
+  KC_PROXY_HEADERS: "xforwarded"
+  KC_HOSTNAME_STRICT_HTTPS: "false"
+  KC_HEALTH_ENABLED: "true"
+  KC_METRICS_ENABLED: "true"
+  KC_HOSTNAME: "{{ .Values.domains.keycloak }}"
+
+keycloakx:
+  fullnameOverride: "keycloak"
+  replicas: 1
+
+  command:
+  - "/opt/keycloak/bin/kc.sh"
+  args:
+  - "start"
+    
+  dbchecker:
+    enabled: true
+
+  database:
+    vendor: postgres
+    hostname: postgres-rw.database.svc.cluster.local
+    port: 5432
+    username: keycloak-admin
+    database: keycloak
+    existingSecret: "keycloak-secrets"
+    existingSecretKey: "KC_DB_PASSWORD"
+
+  proxy:
+    enabled: true
+    mode: edge
+
+  health:
+    enabled: true
+  
+  metrics:
+    enabled: true
+
+  extraEnvFrom: |
+    - configMapRef:
+        name: keycloak-config
+    - secretRef:
+        name: keycloak-secrets
+  
+  extraEnv: |
+    - name: JAVA_OPTS_APPEND
+      value: >-
+        -Djgroups.dns.query={{ include "keycloak.fullname" . }}-headless
+
+  # resources:
+  #   limits:
+  #     cpu: "500m"
+  #     memory: 256Mi
+  #   requests:
+  #     cpu: "100m"
+  #     memory: 256Mi

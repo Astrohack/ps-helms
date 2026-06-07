@@ -1,0 +1,39 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+spec:
+  instances: {{ .Values.instances }}
+
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.4
+
+  storage:
+    size: {{ .Values.storageSize }}
+
+  superuserSecret:
+    name: postgres-superuser-creds
+
+  bootstrap:
+    initdb:
+      database: postgres
+      owner: postgres
+
+  managed:
+    roles:
+      {{- range .Values.customRoles }}
+      - name: {{ .name }}
+        ensure: {{ .ensure | default "present" }}
+        comment: "{{ .comment | default .name }}"
+        superuser: {{ if hasKey . "superuser" }}{{ .superuser }}{{ else }}false{{ end }}
+        login: {{ if hasKey . "login" }}{{ .login }}{{ else }}true{{ end }}
+        inherit: {{ if hasKey . "inherit" }}{{ .inherit }}{{ else }}true{{ end }}
+        connectionLimit: {{ if hasKey . "connectionLimit" }}{{ .connectionLimit }}{{ else }}-1{{ end }}
+        {{- if or .password .passwordSecretName }}
+        passwordSecret:
+          name: {{ .passwordSecretName | default (printf "%s-creds" .name) }}
+        {{- end }}
+        {{- if .inRoles }}
+        inRoles:
+          {{- toYaml .inRoles | nindent 10 }}
+        {{- end }}
+      {{- end }}

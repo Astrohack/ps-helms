@@ -1,0 +1,10 @@
+apiVersion: v2
+name: rustfs-wrapper
+description: Wrapper chart for RustFS Object Storage
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: rustfs
+    version: "0.7.0"
+    repository: "https://rustfs.github.io/helm/"

@@ -1,0 +1,14 @@
+{{- range $db := .Values.customDatabases }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: {{ $db.name }}
+  annotations:
+    cnpg.io/deletion-protection: "true"
+spec:
+  name: {{ $db.name }}
+  owner: {{ $db.owner | quote }}
+  cluster:
+    name: postgres
+---
+{{- end }}
