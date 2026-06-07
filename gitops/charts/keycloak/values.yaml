@@ -3,22 +3,20 @@ domains:
 
 kcSecrets:
   KEYCLOAK_ADMIN_PASSWORD: admin
-  KC_DB_PASSWORD: admin
 
 kcConfig:
   KEYCLOAK_ADMIN: admin
-  KC_DB: "keycloak"
-  KC_DB_URL: "jdbc:postgresql://postgres-rw.database.svc.cluster.local:5432/keycloak"
-  KC_DB_USERNAME: "keycloak-admin"
-  KC_PROXY_HEADERS: "xforwarded"
   KC_HOSTNAME_STRICT_HTTPS: "false"
-  KC_HEALTH_ENABLED: "true"
-  KC_METRICS_ENABLED: "true"
   KC_HOSTNAME: "{{ .Values.domains.keycloak }}"
+  KC_PROXY_HEADERS: "xforwarded"
+  KC_HTTP_ENABLED: "true"
 
 keycloakx:
   fullnameOverride: "keycloak"
   replicas: 1
+
+  image:
+    tag: "26.6.3"
 
   command:
   - "/opt/keycloak/bin/kc.sh"
@@ -33,19 +31,43 @@ keycloakx:
     hostname: postgres-rw.database.svc.cluster.local
     port: 5432
     username: keycloak-admin
+    password: admin
     database: keycloak
-    existingSecret: "keycloak-secrets"
-    existingSecretKey: "KC_DB_PASSWORD"
 
   proxy:
-    enabled: true
-    mode: edge
+    enabled: false
 
   health:
     enabled: true
   
   metrics:
     enabled: true
+
+  http:
+    relativePath: "/"
+
+  livenessProbe: |
+    httpGet:
+      path: /health/live
+      port: 9000
+    initialDelaySeconds: 0
+    timeoutSeconds: 5
+
+  readinessProbe: |
+    httpGet:
+      path: /health/ready
+      port: 9000
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+
+  startupProbe: |
+    httpGet:
+      path: /health
+      port: 9000
+    initialDelaySeconds: 15
+    timeoutSeconds: 1
+    failureThreshold: 60
+    periodSeconds: 5
 
   extraEnvFrom: |
     - configMapRef:
@@ -57,11 +79,3 @@ keycloakx:
     - name: JAVA_OPTS_APPEND
       value: >-
         -Djgroups.dns.query={{ include "keycloak.fullname" . }}-headless
-
-  # resources:
-  #   limits:
-  #     cpu: "500m"
-  #     memory: 256Mi
-  #   requests:
-  #     cpu: "100m"
-  #     memory: 256Mi

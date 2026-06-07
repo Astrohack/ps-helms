@@ -10,11 +10,6 @@ spec:
   http:
     - match:
         - uri:
-            exact: /
-      redirect:
-        uri: /auth/
-    - match:
-        - uri:
             prefix: /
       route:
         - destination:
