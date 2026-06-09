@@ -1,0 +1,10 @@
+apiVersion: v2
+name: nats-mq
+description: Wrapper chart for NATS MQ Message Broker
+type: application
+version: 1.0.0
+appVersion: "2.14.0"
+dependencies:
+  - name: nats
+    version: "2.14.0"
+    repository: "https://nats-io.github.io/k8s/helm/charts/"

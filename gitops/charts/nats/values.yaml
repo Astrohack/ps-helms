@@ -1,0 +1,69 @@
+natsAuth:
+  users:
+    admin: "secure-password"
+    audit: "secure-password"
+    iam: "secure-password"
+    vault: "secure-password"
+
+nats:
+  fullnameOverride: "nats"
+
+  config:
+    cluster:
+      enabled: false
+    jetstream:
+      enabled: true
+      fileStore:
+        pvc:
+          enabled: true
+          size: 1Gi
+
+    merge:
+      authorization:
+        users:
+        - user: "admin"
+          password: "<< $NATS_USER_ADMIN_PASSWORD >>"
+          permissions:
+            publish:
+            - ">"
+            subscribe:
+            - ">"
+        - user: "audit"
+          password: "<< $NATS_USER_AUDIT_PASSWORD >>"
+          permissions:
+            publish:
+            - "$JS.API.>"
+            - "_INBOX.>"
+            subscribe:
+            - "audit.>"
+            - "$JS.API.>"
+            - "_INBOX.>"
+        - user: "iam"
+          password: "<< $NATS_USER_IAM_PASSWORD >>"
+          permissions:
+            publish:
+            - "audit.>"
+            subscribe:
+            - "_INBOX.>"
+        - user: "vault"
+          password: "<< $NATS_USER_VAULT_PASSWORD >>"
+          permissions:
+            publish:
+            - "audit.>"
+            - "_INBOX.>"
+            subscribe:
+            - "_INBOX.>"
+
+  container:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+    merge:
+      envFrom:
+      - secretRef:
+          name: nats-user-creds
