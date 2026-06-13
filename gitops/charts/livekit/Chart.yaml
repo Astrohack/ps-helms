@@ -1,0 +1,11 @@
+apiVersion: v2
+name: livekit-umbrella
+description: Umbrella chart for deploying LiveKit along with its dependencies
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: livekit-server
+    version: "1.9.14" # You can pin it to a specific version, e.g., "1.9.14"
+    repository: "https://helm.livekit.io"
