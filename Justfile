@@ -4,7 +4,7 @@ cluster_name := "local-k3s"
 k3d_config_single := "infrastructure/k3d-config.yaml"
 k3d_config_ha := "infrastructure/k3d-config-ha.yaml"
 age_key_file := "sops-age.key"
-ingress_tls_secrets_file := "gitops/charts/istio-ingressgateway/secrets.enc.yaml"
+ingress_tls_secrets_file := "gitops/charts/infrastructure/istio-ingressgateway/secrets.enc.yaml"
 domain := "*.dev.localhost"
 call_recipe := just_executable() + " --justfile=" + justfile()
 
@@ -13,9 +13,9 @@ _default:
     @just --list
 
 # Provisions the raw k3d cluster with ports 80/443 exposed
-create-cluster mode="single":
+create-cluster mode:
     @echo "Provisioning k3d cluster..."
-    k3d cluster create -c {{ if mode == "single" { k3d_config_single } else if mode == "ha" { k3d_config_ha } else { error("Panic: allowed re only 'single' or 'ha'") } }}
+    k3d cluster create -c {{ if mode == "single" { k3d_config_single } else if mode == "ha" { k3d_config_ha } else { error("allowed re only 'single' or 'ha'") } }}
 
 # Boots the cluster and bootstraps ArgoCD
 bootstrap:
@@ -25,7 +25,7 @@ bootstrap:
     helm repo update
     helm upgrade --install argocd argo/argo-cd -n argocd -f infrastructure/argocd-values.yaml --version 9.5.17
     {{ call_recipe }} _wait-for-argocd
-    kubectl apply -f gitops/bootstrap/appset.yaml -f gitops/bootstrap/appproject.yaml --wait
+    kubectl apply -f gitops/bootstrap/apps.yaml -f gitops/bootstrap/appproject.yaml --wait
 
 # Removes the local k3d cluster instance
 delete-cluster:

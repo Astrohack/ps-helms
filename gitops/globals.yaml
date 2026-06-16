@@ -5,8 +5,3 @@ domains:
   jaeger: "jaeger.dev.localhost"
   keycloak: "keycloak.dev.localhost"
   rustfs: "rustfs.dev.localhost"
-
-# auth:
-#   keycloak:
-#     externalDatabase:
-#       user:

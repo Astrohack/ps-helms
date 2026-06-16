@@ -1,36 +1,36 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: infrastructure-apps
+  name: infrastructure-dynamic-apps
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   goTemplate: true
   generators:
   - git:
-      repoURL: https://github.com/Astrohack/ps-helms.git
-      revision: HEAD
+      repoURL: {{ .Values.repoURL }}
+      revision: {{ .Values.targetRevision }}
       files:
-      - path: "gitops/charts/**/.argocd.yaml"
+      - path: "gitops/charts/apps/**/.argocd.yaml"
   template:
     metadata:
-      name: "{{ .path.basename }}"
-      annotations:
-        argocd.argoproj.io/sync-wave: '{{ default "5" .syncWave }}'
+      name: '{{ "{{ .path.basename }}" }}'
     spec:
       project: infrastructure
       source:
-        repoURL: https://github.com/Astrohack/ps-helms.git
-        targetRevision: HEAD
-        path: "{{ .path.path }}"
+        repoURL: {{ $.Values.repoURL }}
+        targetRevision: {{ $.Values.targetRevision }}
+        path: '{{ "{{ .path.path }}" }}'
         helm:
           ignoreMissingValueFiles: true
           valueFiles:
           - values.yaml
           - secrets://secrets.enc.yaml
-          - "../../globals.yaml"
+          - "../../../globals.yaml"
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{ default "default" .targetNamespace }}'
+        namespace: '{{ "{{ default \"default\" .targetNamespace }}" }}'
       syncPolicy:
         # automated:
         #   prune: true

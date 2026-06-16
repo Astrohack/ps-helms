@@ -1,0 +1,35 @@
+repoURL: https://github.com/Astrohack/ps-helms.git
+targetRevision: HEAD
+
+apps:
+  - name: istio-base
+    path: gitops/charts/infrastructure/istio-base
+    targetNamespace: istio-system
+    syncWave: 1
+
+  - name: istiod
+    path: gitops/charts/infrastructure/istiod
+    targetNamespace: istio-system
+    syncWave: 2
+  - name: cloudnative-pg
+    path: gitops/charts/infrastructure/cloudnative-pg
+    targetNamespace: cnpg-system
+    syncWave: 2
+  - name: kube-prometheus-stack
+    path: gitops/charts/infrastructure/kube-prometheus-stack
+    targetNamespace: monitoring
+    syncWave: 2
+
+  - name: istio-ingressgateway
+    path: gitops/charts/infrastructure/istio-ingressgateway
+    targetNamespace: istio-system
+    syncWave: 3
+  - name: rustfs
+    path: gitops/charts/infrastructure/rustfs
+    targetNamespace: storage
+    syncWave: 3
+
+  - name: postgres
+    path: gitops/charts/infrastructure/postgres
+    targetNamespace: database
+    syncWave: 4
