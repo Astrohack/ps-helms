@@ -9,8 +9,16 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
 podAnnotations: {}
 podLabels: {}
+
+autoscaling:
+  enabled: false
 
 podSecurityContext: {} # fsGroup: 2000
 
@@ -36,6 +44,19 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
+
+env:
+  - name: SPRING_APPLICATION_NAME
+    value: "config-server"
+  - name: CONFIG_GIT_URI
+    value: "https://github.com/Astrohack/ps-config.git"
+  - name: CONFIG_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: config-server-secret
+        key: config-token
+  - name: CONFIG_GIT_BRANCH
+    value: "main"
 
 livenessProbe:
   httpGet:
