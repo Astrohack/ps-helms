@@ -44,6 +44,8 @@ spec:
             - name: http
               containerPort: 8888
               protocol: TCP
+            - name: management
+              containerPort: 8081
           {{- with .Values.env }}
           env:
             {{- toYaml . | nindent 12 }}

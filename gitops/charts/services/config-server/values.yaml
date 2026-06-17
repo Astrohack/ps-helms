@@ -1,8 +1,8 @@
 replicaCount: 1
 
 image:
-  repository: registry.local/config-server
-  pullPolicy: IfNotPresent
+  repository: local-registry:5000/config-server
+  pullPolicy: Always
   tag: "1.0.0"
 
 imagePullSecrets: []
@@ -49,7 +49,9 @@ env:
   - name: SPRING_APPLICATION_NAME
     value: "config-server"
   - name: CONFIG_GIT_URI
-    value: "https://github.com/Astrohack/ps-config.git"
+    value: "https://github.com/pass-shield/ps-config.git"
+  - name: XDG_CONFIG_HOME
+    value: /tmp/.config
   - name: CONFIG_TOKEN
     valueFrom:
       secretKeyRef:
@@ -61,15 +63,19 @@ env:
 livenessProbe:
   httpGet:
     path: /actuator/health/liveness
-    port: 8888
+    port: management
 readinessProbe:
   httpGet:
     path: /actuator/health/readiness
-    port: 8888
+    port: management
 
-volumes: []
+volumes:
+  - name: tmp-volume
+    emptyDir: {}
 
-volumeMounts: []
+volumeMounts:
+  - name: tmp-volume
+    mountPath: /tmp
 
 nodeSelector: {}
 

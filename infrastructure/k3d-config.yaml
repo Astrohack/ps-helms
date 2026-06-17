@@ -17,11 +17,11 @@ options:
         nodeFilters: [ "server:*" ]
 registries:
   create:
-    name: registry.localhost
+    name: local-registry
     host: "0.0.0.0"
     hostPort: "5000"
   config: |
     mirrors:
       "registry.local":
         endpoint:
-          - "http://k3d-registry.localhost:5000"
+          - "http://local-registry:5000"

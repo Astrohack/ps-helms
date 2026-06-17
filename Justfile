@@ -36,6 +36,7 @@ bootstrap:
     helm repo update
     helm upgrade --install argocd argo/argo-cd -n argocd -f infrastructure/argocd-values.yaml --version 9.5.17
     {{ call_recipe }} _wait-for-argocd
+    sleep 30
     kubectl apply -f gitops/bootstrap/appproject.yaml  -f gitops/bootstrap/apps.yaml --wait
 
 # Waits for Argo CD server to become ready
