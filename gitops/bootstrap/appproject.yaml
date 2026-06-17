@@ -28,6 +28,6 @@ spec:
       server: https://kubernetes.default.svc
     - namespace: 'apps-*'
       server: https://kubernetes.default.svc
-  namespaceResourceWhitelist:
+  clusterResourceWhitelist:
     - group: '*'
       kind: '*'
