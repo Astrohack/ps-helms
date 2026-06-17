@@ -13,3 +13,21 @@ spec:
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: applications
+  namespace: argocd
+spec:
+  description: "User and business application services"
+  sourceRepos:
+    - "https://github.com/Astrohack/ps-helms.git"
+  destinations:
+    - namespace: 'apps'
+      server: https://kubernetes.default.svc
+    - namespace: 'apps-*'
+      server: https://kubernetes.default.svc
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'

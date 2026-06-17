@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: services
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+spec:
+  goTemplate: true
+  generators:
+  - git:
+      repoURL: {{ .Values.repoURL }}
+      revision: {{ .Values.targetRevision }}
+      requeueAfterSeconds: {{ .Values.appsetRequeueAfterSeconds | default 600 }}
+      files:
+      - path: "gitops/charts/services/**/.argocd.yaml"
+  template:
+    metadata:
+      name: '{{ "{{ .path.basename }}" }}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{ "{{ default \"10\" .syncWave | quote }}" }}'
+    spec:
+      project: applications
+      source:
+        repoURL: {{ $.Values.repoURL }}
+        targetRevision: {{ $.Values.targetRevision }}
+        path: '{{ "{{ .path.path }}" }}'
+        helm:
+          ignoreMissingValueFiles: true
+          valueFiles:
+          - values.yaml
+          - secrets://secrets.enc.yaml
+          - "../../../globals.yaml"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ "{{ default \"apps\" .targetNamespace }}" }}'
+      syncPolicy:
+        {{- if $.Values.appsetSyncPolicy }}
+        {{- toYaml $.Values.appsetSyncPolicy | nindent 8 }}
+        {{- else }}
+        {{- toYaml $.Values.syncPolicy | nindent 8 }}
+        {{- end }}

@@ -5,3 +5,4 @@ domains:
   jaeger: "jaeger.dev.localhost"
   keycloak: "keycloak.dev.localhost"
   rustfs: "rustfs.dev.localhost"
+  configServer: "config-server.dev.localhost"

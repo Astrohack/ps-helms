@@ -9,7 +9,7 @@ options:
   k3s:
     extraArgs:
       - arg: --disable=traefik
-        nodeFilters: ["server:*"]
+        nodeFilters: [ "server:*" ]
     nodeLabels:
       - label: topology.kubernetes.io/zone=zone-a
         nodeFilters:
@@ -20,11 +20,16 @@ options:
 
 ports:
   - port: 80:80
-    nodeFilters: [loadbalancer]
+    nodeFilters: [ loadbalancer ]
   - port: 443:443
-    nodeFilters: [loadbalancer]
+    nodeFilters: [ loadbalancer ]
 registries:
   create:
     name: registry.localhost
     host: "0.0.0.0"
     hostPort: "5000"
+  config: |
+    mirrors:
+      "registry.local":
+        endpoint:
+          - "http://k3d-registry.localhost:5000"
