@@ -2,10 +2,9 @@ configs:
   params:
     server.insecure: true
   cm:
+    timeout.reconciliation: 24h
     helm.valuesFileSchemes: >-
-      secrets,
-      secrets+age-import,
-      secrets+age-import-kubernetes
+      secrets, secrets+age-import, secrets+age-import-kubernetes
     resource.customizations.health.argoproj.io_Application: |
       hs = {}
       hs.status = "Progressing"
@@ -43,7 +42,7 @@ repoServer:
   initContainers:
     - name: download-tools
       image: alpine:3.19
-      command: [sh, -c]
+      command: [ sh, -c ]
       env:
         - name: HELM_SECRETS_VERSION
           value: "4.7.6"
@@ -51,12 +50,7 @@ repoServer:
           value: "v3.13.1"
       args:
         - >-
-          mkdir -p /custom-tools/helm-plugins &&
-          wget -qO /custom-tools/sops https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64 &&
-          chmod +x /custom-tools/sops &&
-          wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf- &&
-          cp /custom-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /custom-tools/helm &&
-          chmod +x /custom-tools/helm
+          mkdir -p /custom-tools/helm-plugins && wget -qO /custom-tools/sops https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux.amd64 && chmod +x /custom-tools/sops && wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf- && cp /custom-tools/helm-plugins/helm-secrets/scripts/wrapper/helm.sh /custom-tools/helm && chmod +x /custom-tools/helm
       volumeMounts:
         - mountPath: /custom-tools
           name: custom-tools

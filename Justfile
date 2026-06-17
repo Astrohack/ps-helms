@@ -13,9 +13,20 @@ _default:
     @just --list
 
 # Provisions the raw k3d cluster with ports 80/443 exposed
-create-cluster mode:
+cluster-create mode:
     @echo "Provisioning k3d cluster..."
     k3d cluster create -c {{ if mode == "single" { k3d_config_single } else if mode == "ha" { k3d_config_ha } else { error("allowed re only 'single' or 'ha'") } }}
+
+# Removes all local clusters, purges docker networks and restart docker
+cluster-purge:
+    k3d cluster delete --all
+    docker network prune -f
+    sudo systemctl restart docker
+
+# Removes the local k3d cluster instance
+cluster-delete:
+    @echo "Destroying k3d cluster..."
+    k3d cluster delete {{ cluster_name }}
 
 # Boots the cluster and bootstraps ArgoCD
 bootstrap:
@@ -25,12 +36,7 @@ bootstrap:
     helm repo update
     helm upgrade --install argocd argo/argo-cd -n argocd -f infrastructure/argocd-values.yaml --version 9.5.17
     {{ call_recipe }} _wait-for-argocd
-    kubectl apply -f gitops/bootstrap/apps.yaml -f gitops/bootstrap/appproject.yaml --wait
-
-# Removes the local k3d cluster instance
-delete-cluster:
-    @echo "Destroying k3d cluster..."
-    k3d cluster delete {{ cluster_name }}
+    kubectl apply -f gitops/bootstrap/appproject.yaml  -f gitops/bootstrap/apps.yaml --wait
 
 # Waits for Argo CD server to become ready
 _wait-for-argocd:

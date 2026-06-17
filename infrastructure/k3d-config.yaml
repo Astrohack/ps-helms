@@ -15,3 +15,8 @@ options:
     extraArgs:
       - arg: --disable=traefik
         nodeFilters: ["server:*"]
+registries:
+  create:
+    name: registry.localhost
+    host: "0.0.0.0"
+    hostPort: "5000"

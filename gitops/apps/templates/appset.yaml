@@ -11,6 +11,7 @@ spec:
   - git:
       repoURL: {{ .Values.repoURL }}
       revision: {{ .Values.targetRevision }}
+      requeueAfterSeconds: {{ .Values.appsetRequeueAfterSeconds | default 600 }}
       files:
       - path: "gitops/charts/apps/**/.argocd.yaml"
   template:
@@ -32,9 +33,8 @@ spec:
         server: https://kubernetes.default.svc
         namespace: '{{ "{{ default \"default\" .targetNamespace }}" }}'
       syncPolicy:
-        # automated:
-        #   prune: true
-        #   selfHeal: true
-        syncOptions:
-        - CreateNamespace=true
-        - ServerSideApply=true
+        {{- if $.Values.appsetSyncPolicy }}
+        {{- toYaml $.Values.appsetSyncPolicy | nindent 8 }}
+        {{- else }}
+        {{- toYaml $.Values.syncPolicy | nindent 8 }}
+        {{- end }}

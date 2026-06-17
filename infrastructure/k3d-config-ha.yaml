@@ -23,3 +23,8 @@ ports:
     nodeFilters: [loadbalancer]
   - port: 443:443
     nodeFilters: [loadbalancer]
+registries:
+  create:
+    name: registry.localhost
+    host: "0.0.0.0"
+    hostPort: "5000"

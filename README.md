@@ -7,7 +7,7 @@ mise install
 run:
 
 ```bash
-just create-cluster single
+just cluster-create single
 just setup-sops
 just inject-sops-key
 just generate-and-inject-tls
