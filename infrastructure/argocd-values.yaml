@@ -16,6 +16,11 @@ configs:
             hs.message = obj.status.health.message
           end
         end
+        local syncStatus = (obj.status.sync and obj.status.sync.status or nil)
+        if hs.status == "Healthy" and syncStatus ~= "Synced" then
+          hs.status = "Progressing"
+          hs.message = "Application is healthy but sync status is: " .. (syncStatus or "Unknown")
+        end
       end
       return hs
 
