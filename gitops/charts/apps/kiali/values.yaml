@@ -14,7 +14,7 @@ kiali-server:
       url: 'https://jaeger.dev.localhost'
       use_grpc: true
     prometheus:
-      enabled: false
+      enabled: true
       url: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
     grafana:
       enabled: true

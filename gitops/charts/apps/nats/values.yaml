@@ -33,6 +33,7 @@ nats:
             permissions:
               publish:
                 - "$JS.API.>"
+                - "$JS.ACK.>"
                 - "_INBOX.>"
               subscribe:
                 - "audit.>"

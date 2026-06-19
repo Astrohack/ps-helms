@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: envoy-stats-monitor
+  namespace: istio-system
+spec:
+  selector:
+    matchExpressions:
+    - {key: istio-prometheus-ignore, operator: DoesNotExist}
+  namespaceSelector:
+    any: true
+  jobLabel: envoy-stats
+  podMetricsEndpoints:
+  - path: /stats/prometheus
+    interval: 15s
+    relabelings:
+    - action: keep
+      sourceLabels: [__meta_kubernetes_pod_container_port_name]
+      regex: ".*-envoy-prom"

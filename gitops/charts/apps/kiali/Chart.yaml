@@ -3,5 +3,5 @@ name: kiali
 version: 1.0.0
 dependencies:
   - name: kiali-server
-    version: 1.86.0
+    version: 2.27.0
     repository: https://kiali.org/helm-charts

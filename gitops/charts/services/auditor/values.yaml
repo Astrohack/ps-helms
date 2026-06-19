@@ -9,9 +9,9 @@ image:
   pullPolicy: Always
 
 service:
-  enabled: false
+  enabled: true
   type: ClusterIP
-  port: 80
+  port: 8080
 
 env: []
 
@@ -29,10 +29,10 @@ config:
   dbSslMode: "disable"
   dbConnectTimeout: 5
 
-  otlpEndpoint: "http://jaeger.apps.svc.cluster.local:4318"
+  otlpEndpoint: "http://jaeger-collector.jaeger.svc.cluster.local:4318"
 
   natsUrl: "nats://nats.nats.svc.cluster.local:4222"
-  natsUser: "audit"
+  natsUser: "auditor"
   natsStreamName: "audit-service-stream"
   natsSubject: "audit.events.*"
   natsDurableName: "audit-service-consumer"
