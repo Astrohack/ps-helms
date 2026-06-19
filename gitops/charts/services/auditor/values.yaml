@@ -1,0 +1,52 @@
+domains:
+  backend: "auditor.dev.localhost"
+
+replicaCount: 1
+
+image:
+  repository: local-registry:5000/auditor
+  tag: "1.0.0"
+  pullPolicy: Always
+
+service:
+  enabled: false
+  type: ClusterIP
+  port: 80
+
+env: []
+
+config:
+  appName: "auditor"
+  profile: "default"
+  port: 8080
+
+  configServerUrl: "http://config-server.apps.svc.cluster.local"
+  configServerUsername: "service"
+
+  dbHost: postgres-rw.database.svc.cluster.local
+  dbPort: 5432
+  dbName: audit-logs
+  dbSslMode: "disable"
+  dbConnectTimeout: 5
+
+  otlpEndpoint: "http://jaeger.apps.svc.cluster.local:4318"
+
+  natsUrl: "nats://nats.nats.svc.cluster.local:4222"
+  natsUser: "audit"
+  natsStreamName: "audit-service-stream"
+  natsSubject: "audit.events.*"
+  natsDurableName: "audit-service-consumer"
+
+livenessProbe:
+  httpGet:
+    path: /live
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10

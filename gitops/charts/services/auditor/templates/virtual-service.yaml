@@ -13,6 +13,6 @@ spec:
             prefix: /
       route:
         - destination:
-            host: backend.{{ .Release.Namespace }}.svc.cluster.local
+            host: {{ .Chart.Name }}.{{ .Release.Namespace }}.svc.cluster.local
             port:
               number: {{ .Values.service.port }}

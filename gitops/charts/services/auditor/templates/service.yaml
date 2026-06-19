@@ -1,3 +1,4 @@
+{{- if .Values.service.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,8 +9,9 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: 8080
+      targetPort: {{ .Values.config.port }}
       protocol: TCP
       name: http
   selector:
     app: {{ .Chart.Name }}
+{{- end }}

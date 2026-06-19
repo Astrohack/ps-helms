@@ -1,7 +1,7 @@
 natsAuth:
   users:
     admin: "secure-password"
-    audit: "secure-password"
+    auditor: "secure-password"
     iam: "secure-password"
     vault: "secure-password"
 
@@ -21,38 +21,38 @@ nats:
     merge:
       authorization:
         users:
-        - user: "admin"
-          password: "<< $NATS_USER_ADMIN_PASSWORD >>"
-          permissions:
-            publish:
-            - ">"
-            subscribe:
-            - ">"
-        - user: "audit"
-          password: "<< $NATS_USER_AUDIT_PASSWORD >>"
-          permissions:
-            publish:
-            - "$JS.API.>"
-            - "_INBOX.>"
-            subscribe:
-            - "audit.>"
-            - "$JS.API.>"
-            - "_INBOX.>"
-        - user: "iam"
-          password: "<< $NATS_USER_IAM_PASSWORD >>"
-          permissions:
-            publish:
-            - "audit.>"
-            subscribe:
-            - "_INBOX.>"
-        - user: "vault"
-          password: "<< $NATS_USER_VAULT_PASSWORD >>"
-          permissions:
-            publish:
-            - "audit.>"
-            - "_INBOX.>"
-            subscribe:
-            - "_INBOX.>"
+          - user: "admin"
+            password: "<< $NATS_USER_ADMIN_PASSWORD >>"
+            permissions:
+              publish:
+                - ">"
+              subscribe:
+                - ">"
+          - user: "auditor"
+            password: "<< $NATS_USER_AUDITOR_PASSWORD >>"
+            permissions:
+              publish:
+                - "$JS.API.>"
+                - "_INBOX.>"
+              subscribe:
+                - "audit.>"
+                - "$JS.API.>"
+                - "_INBOX.>"
+          - user: "iam"
+            password: "<< $NATS_USER_IAM_PASSWORD >>"
+            permissions:
+              publish:
+                - "audit.>"
+              subscribe:
+                - "_INBOX.>"
+          - user: "vault"
+            password: "<< $NATS_USER_VAULT_PASSWORD >>"
+            permissions:
+              publish:
+                - "audit.>"
+                - "_INBOX.>"
+              subscribe:
+                - "_INBOX.>"
 
   container:
     resources:
@@ -65,5 +65,5 @@ nats:
 
     merge:
       envFrom:
-      - secretRef:
-          name: nats-user-creds
+        - secretRef:
+            name: nats-user-creds

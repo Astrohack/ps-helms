@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.config.port }}
+              protocol: TCP
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: {{ .Values.config.appName | quote }}
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.config.profile | quote }}
+            - name: CONFIG_SERVER_URL
+              value: {{ .Values.config.configServerUrl | quote }}
+            - name: CONFIG_SERVER_USERNAME
+              value: {{ .Values.config.configServerUsername | quote }}
+            - name: CONFIG_SERVER_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-secret
+                  key: config-token
+            - name: DATABASE_HOST
+              value: {{ .Values.config.dbHost | quote }}
+            - name: DATABASE_PORT
+              value: {{ .Values.config.dbPort | quote }}
+            - name: DATABASE_NAME
+              value: {{ .Values.config.dbName | quote }}
+            - name: PORT
+              value: {{ .Values.config.port | quote }}
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-secret
+                  key: db-user
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-secret
+                  key: db-password
+            - name: DATABASE_SSLMODE
+              value: {{ .Values.config.dbSslMode | quote }}
+            - name: NATS_URL
+              value: {{ .Values.config.natsUrl | quote }}
+            - name: NATS_USER
+              value: {{ .Values.config.natsUser | quote }}
+            - name: NATS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-secret
+                  key: nats-password
+            - name: NATS_STREAM_NAME
+              value: {{ .Values.config.natsStreamName | quote }}
+            - name: NATS_SUBJECT
+              value: {{ .Values.config.natsSubject | quote }}
+            - name: NATS_DURABLE_NAME
+              value: {{ .Values.config.natsDurableName | quote }}
+            - name: OTLP_ENDPOINT
+              value: {{ .Values.config.otlpEndpoint | quote }}
+            {{- if .Values.env }}
+            {{- toYaml .Values.env | nindent 12 }}
+            {{- end }}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
