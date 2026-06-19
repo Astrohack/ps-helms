@@ -12,9 +12,15 @@ customRoles:
     password: "admin"
     login: true
     comment: "Auditor admin role"
+  - name: &advisor-admin advisor-admin
+    password: "admin"
+    login: true
+    comment: "Advisor admin role"
 
 customDatabases:
   - name: keycloak
     owner: *kc-admin
   - name: audit-logs
     owner: *auditor-admin
+  - name: advisor
+    owner: *advisor-admin
