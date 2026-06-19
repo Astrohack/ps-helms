@@ -1,5 +1,5 @@
 domains:
-  backend: "auditor.dev.localhost"
+  auditor: "auditor.dev.localhost"
 
 replicaCount: 1
 

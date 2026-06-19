@@ -6,3 +6,5 @@ domains:
   keycloak: "keycloak.dev.localhost"
   rustfs: "rustfs.dev.localhost"
   configServer: "config-server.dev.localhost"
+  audit: "audit.dev.localhost"
+  auditor: "auditor.dev.localhost"

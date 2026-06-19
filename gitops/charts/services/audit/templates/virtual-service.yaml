@@ -4,7 +4,7 @@ metadata:
   name: {{ .Chart.Name }}-vs
 spec:
   hosts:
-    - "{{ .Values.domains.auditor }}"
+    - "{{ .Values.domains.audit }}"
   gateways:
     - istio-system/ops-gateway
   http:
