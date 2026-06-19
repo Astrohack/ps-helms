@@ -48,7 +48,7 @@ spec:
                 secretKeyRef:
                   name: {{ .Chart.Name }}-secret
                   key: db-password
-            - name: OTLP_ENDPOINT
+            - name: JAEGER_HOST
               value: {{ .Values.config.otlpEndpoint | quote }}
             - name: LLM_API_KEY
               valueFrom:

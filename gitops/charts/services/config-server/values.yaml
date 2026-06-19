@@ -58,7 +58,7 @@ env:
         name: config-server-secret
         key: config-token
   - name: CONFIG_GIT_BRANCH
-    value: "main"
+    value: "k8s"
 
 livenessProbe:
   httpGet:

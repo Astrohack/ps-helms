@@ -29,7 +29,7 @@ config:
   dbSslMode: "disable"
   dbConnectTimeout: 5
 
-  otlpEndpoint: "http://jaeger-collector.jaeger.svc.cluster.local:4318/v1/traces"
+  otlpEndpoint: "jaeger-collector.jaeger.svc.cluster.local"
 
   llmProvider: "openai"
 
