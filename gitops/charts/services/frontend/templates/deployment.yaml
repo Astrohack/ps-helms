@@ -24,35 +24,6 @@ spec:
               containerPort: {{ .Values.config.port }}
               protocol: TCP
           env:
-            - name: SPRING_APPLICATION_NAME
-              value: {{ .Values.config.appName | quote }}
-            - name: SPRING_PROFILES_ACTIVE
-              value: {{ .Values.config.profile | quote }}
-            - name: SPRING_CONFIG_IMPORT
-              value: "optional:configserver:{{ .Values.config.configServerUrl }}"
-            - name: CONFIG_SERVER_USERNAME
-              value: {{ .Values.config.configServerUsername | quote }}
-            - name: CONFIG_SERVICE_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Chart.Name }}-secret
-                  key: config-token
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://{{ .Values.config.dbHost }}:{{ .Values.config.dbPort }}/{{ .Values.config.dbName }}?sslmode={{ .Values.config.dbSslMode }}"
-            - name: SPRING_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Chart.Name }}-secret
-                  key: db-user
-            - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Chart.Name }}-secret
-                  key: db-password
-            - name: JAEGER_HOST
-              value: {{ .Values.config.otlpEndpoint | quote }}
-            - name: SERVER_PORT
-              value: {{ .Values.config.port | quote }}
             {{- if .Values.env }}
             {{- toYaml .Values.env | nindent 12 }}
             {{- end }}
