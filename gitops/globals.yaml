@@ -9,3 +9,4 @@ domains:
     audit: "audit.dev.localhost"
     auditor: "auditor.dev.localhost"
     vault: "vault.dev.localhost"
+    iam: "iam.dev.localhost"

@@ -1,0 +1,32 @@
+domains:
+  iam: "iam.dev.localhost"
+
+replicaCount: 1
+
+image:
+  repository: local-registry:5000/iam
+  tag: "1.0.0"
+  pullPolicy: Always
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 3000
+
+env: []
+
+config:
+  appName: "ps-iam"
+  profile: "default"
+  port: 3000
+
+  configServerUrl: "http://config-server.apps.svc.cluster.local:80"
+  configServerUsername: "service"
+
+  dbHost: postgres-rw.database.svc.cluster.local
+  dbPort: 5432
+  dbName: iam
+  dbSslMode: "disable"
+  dbConnectTimeout: 5
+
+  otlpEndpoint: "jaeger-collector.jaeger.svc.cluster.local"
