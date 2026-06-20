@@ -1,0 +1,18 @@
+istiod:
+  meshConfig:
+    enablePrometheusMerge: true
+    enableTracing: true
+    extensionProviders:
+      - name: otel
+        opentelemetry:
+          service: jaeger-collector.jaeger.svc.cluster.local
+          port: 4317
+
+    defaultProviders:
+      tracing:
+        - otel
+      metrics:
+      - prometheus
+    defaultConfig:
+      tracing:
+        sampling: 100
