@@ -4,6 +4,7 @@ metadata:
   name: {{ .Chart.Name }}
   labels:
     app: {{ .Chart.Name }}
+    version:
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -57,7 +58,7 @@ spec:
                   key: llm-api-key
             - name: LLM_PROVIDER
               value: {{ .Values.config.llmProvider | quote }}
-            - name: PORT
+            - name: SERVER_PORT
               value: {{ .Values.config.port | quote }}
             {{- if .Values.env }}
             {{- toYaml .Values.env | nindent 12 }}

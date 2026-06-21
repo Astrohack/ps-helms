@@ -12,4 +12,4 @@ yq = "latest"
 [plugins]
 
 [env]
-SOPS_AGE_KEY_FILE = "sops-age.key"
+SOPS_AGE_KEY_FILE = "{{config_root}}/sops-age.key"
