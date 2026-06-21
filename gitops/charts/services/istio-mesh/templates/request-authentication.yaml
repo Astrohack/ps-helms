@@ -1,0 +1,13 @@
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: jwt-auth
+  namespace: {{ .Release.Namespace | default "apps" }}
+spec:
+  jwtRules:
+    - issuer: "http://iam.{{ .Release.Namespace | default "apps" }}.svc.cluster.local:3000/api/v1/auth"
+      jwksUri: "http://iam.{{ .Release.Namespace | default "apps" }}.svc.cluster.local:3000/api/v1/auth/jwks"
+      outputPayloadToHeader: "x-user"
+      outputClaimToHeaders:
+        - header: "x-user-id"
+          claim: "userId"
