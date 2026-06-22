@@ -18,6 +18,21 @@ spec:
       database: postgres
       owner: postgres
 
+  backup:
+    retentionPolicy: "1d"
+    barmanObjectStore:
+      destinationPath: s3://backups/prod
+      endpointURL: http://rustfs-svc.storage.svc.cluster.local:9000
+      s3Credentials:
+        accessKeyId:
+          name: rustfs-credentials
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: rustfs-credentials
+          key: ACCESS_SECRET_KEY
+      wal:
+        compression: gzip
+
   managed:
     roles:
       {{- range .Values.customRoles }}
